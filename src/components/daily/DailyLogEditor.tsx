@@ -11,7 +11,7 @@ export interface TemplateRequest { key: DailyTemplateKey; nonce: number }
 
 const EMPTY_IDS: string[] = [];
 
-export function DailyLogEditor({ log, date = getLocalDateKey(), templateRequest, defaultProjectIds = EMPTY_IDS, defaultTopicIds = EMPTY_IDS, onSaved, onDeleted }: { log?: DailyLog; date?: string; templateRequest?: TemplateRequest; defaultProjectIds?: string[]; defaultTopicIds?: string[]; onSaved?: (id: string) => void; onDeleted?: () => void }) {
+export function DailyLogEditor({ log, date = getLocalDateKey(), templateRequest, defaultProjectIds = EMPTY_IDS, defaultTopicIds = EMPTY_IDS, allowDelete = true, onSaved, onDeleted }: { log?: DailyLog; date?: string; templateRequest?: TemplateRequest; defaultProjectIds?: string[]; defaultTopicIds?: string[]; allowDelete?: boolean; onSaved?: (id: string) => void; onDeleted?: () => void }) {
   const { saveDailyLog, deleteDailyLog, state } = useStudyState();
   const [work, setWork] = useState("");
   const [learned, setLearned] = useState("");
@@ -32,7 +32,7 @@ export function DailyLogEditor({ log, date = getLocalDateKey(), templateRequest,
     setTags([...(log?.tags?.length ? log.tags : ["work"])]);
     setTopicIds([...new Set([...(log?.roadmapItemIds ?? []), ...defaultTopicIds])]);
     setProjectIds([...new Set([...(log?.projectIds ?? []), ...defaultProjectIds])]);
-    setExpanded(Boolean(log?.learned || log?.problems || log?.next || log?.roadmapItemIds?.length || log?.projectIds?.length));
+    setExpanded(Boolean(log?.learned || log?.problems || log?.next || log?.roadmapItemIds?.length || log?.projectIds?.length || defaultTopicIds.length || defaultProjectIds.length));
     setSaved(false);
   }, [date, defaultProjectIds, defaultTopicIds, log]);
 
@@ -83,7 +83,7 @@ export function DailyLogEditor({ log, date = getLocalDateKey(), templateRequest,
           <fieldset className="daily-relations"><legend>关联项目</legend><div className="choice-chips">{projects.map((project) => <button type="button" className={projectIds.includes(project.id) ? "active" : ""} aria-pressed={projectIds.includes(project.id)} onClick={() => toggle(projectIds, project.id, setProjectIds)} key={project.id}>{project.name}</button>)}</div></fieldset>
         </div>
       ) : null}
-      <div className="daily-editor-actions">{log ? <button className="danger-button" type="button" onClick={remove}><Trash2 size={14} />删除</button> : <span /> }<button className="primary-button daily-save" type="submit" disabled={!work.trim()}><Save size={15} />{saved ? "已保存" : "保存今天"}</button></div>
+      <div className="daily-editor-actions">{log && allowDelete ? <button className="danger-button" type="button" onClick={remove}><Trash2 size={14} />删除</button> : <span /> }<button className="primary-button daily-save" type="submit" disabled={!work.trim()}><Save size={15} />{saved ? "已保存" : "保存今天"}</button></div>
     </form>
   );
 }

@@ -834,8 +834,12 @@ button:disabled { cursor: not-allowed; opacity: .5; }
 .topic-detail-block .criteria-list li::before { display: none; }
 .criteria-list li > span { display: grid; width: 18px; height: 18px; flex: none; place-items: center; border: 1px solid var(--border); border-radius: 5px; color: var(--muted-2); }
 .practice-advice { margin: 0 -12px; padding: 18px 12px; border-bottom: 0; border-radius: 9px; background: var(--blue-soft); }
-.topic-block-heading { display: flex; align-items: center; justify-content: space-between; }
-.topic-block-heading span { color: var(--muted); font-size: 8px; }
+.topic-block-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.topic-detail-block .topic-block-heading h3 { margin: 0; }
+.topic-block-actions { display: flex; align-items: center; gap: 10px; }
+.topic-block-actions > span { color: var(--muted); font-size: 8px; white-space: nowrap; }
+.topic-block-actions > button { display: inline-flex; min-height: 29px; align-items: center; gap: 5px; padding: 0 9px; cursor: pointer; border: 1px solid color-mix(in srgb, var(--blue) 34%, var(--border)); border-radius: 6px; color: var(--blue); background: var(--blue-soft); font-size: 8px; font-weight: 650; }
+.topic-block-actions > button:hover { border-color: color-mix(in srgb, var(--blue) 58%, var(--border)); }
 .topic-log-list { display: grid; }
 .topic-log-list button { display: grid; min-height: 42px; grid-template-columns: 72px 1fr; align-items: center; gap: 9px; cursor: pointer; border-top: 1px solid var(--border); color: var(--text); background: transparent; text-align: left; }
 .topic-log-list time { color: var(--muted); font: 550 8px ui-monospace, monospace; }
