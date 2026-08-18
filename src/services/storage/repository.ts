@@ -1,4 +1,5 @@
 import type { StudyState, V1StudyState } from "../../types";
+import { clearAllDailyLogDrafts } from "../dailyDrafts";
 import { PRE_IMPORT_SNAPSHOT_KEY, STORAGE_V1_KEY, STORAGE_V2_KEY, STORAGE_V3_KEY } from "./constants";
 import { createDefaultStudyState, migrateV1ToV2, migrateV2ToV3, normalizeV3State } from "./migrations";
 
@@ -56,6 +57,7 @@ class LocalStorageStudyRepository implements StudyRepository {
   clearAll(): void {
     if (typeof window === "undefined") return;
     [STORAGE_V3_KEY, STORAGE_V2_KEY, STORAGE_V1_KEY, PRE_IMPORT_SNAPSHOT_KEY].forEach((key) => window.localStorage.removeItem(key));
+    clearAllDailyLogDrafts();
   }
 
   exportBackup(state: StudyState): void {
@@ -75,6 +77,7 @@ class LocalStorageStudyRepository implements StudyRepository {
     const imported = parseBackup(JSON.parse(await file.text()) as unknown);
     window.localStorage.setItem(PRE_IMPORT_SNAPSHOT_KEY, JSON.stringify(currentState));
     window.localStorage.setItem(STORAGE_V3_KEY, JSON.stringify(imported));
+    clearAllDailyLogDrafts();
     return imported;
   }
 }

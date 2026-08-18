@@ -29,6 +29,7 @@ Daily Log 是唯一的日常记录入口。Roadmap 负责回答“下一步学�
 ### Today
 
 - “今天主要做了什么”是唯一必填项；其余内容通过“展开更多”按需填写。
+- 输入停止约 600ms 后会把未提交内容自动保存为当前设备上的本地草稿；刷新、切换页面或重新打开编辑器时会恢复，点击“保存今天”后草稿自动清除。
 - 可选字段包括：学到了什么、遇到的问题、之后继续研究什么、关联 Topic、关联 Project。
 - Bug、Learning、Automation、Deployment 四个快捷模板只填充提示，不创建额外数据类型。
 - 一天默认维护一条 Daily Log；已保存内容可以继续修改。
@@ -151,7 +152,7 @@ npm run build
 
 - Settings → Export Backup 下载 `study-hub-v3-backup-YYYY-MM-DD.json`。
 - Settings → Import Backup 支持 V3 envelope/raw state、V2 与 V1 备份，并在替换前保存安全快照。
-- Reset 会列出删除范围，只有输入大写 `RESET` 才能执行。
+- Reset 会列出删除范围，只有输入大写 `RESET` 才能执行；导入备份或重置时也会清理旧的本地草稿，避免覆盖新数据。
 - 数据默认只存在当前浏览器和当前设备；清理浏览器站点数据前应先导出备份。
 
 ## 部署到 study.leorxx.xyz

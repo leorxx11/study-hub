@@ -6,6 +6,7 @@ import App from "../src/App";
 import { defaultProjectMilestones } from "../src/data/projectMilestones";
 import { defaultFocusTopicIds, roadmapModules, roadmapPaths, roadmapTopics, topicById } from "../src/data/roadmapV3";
 import { buildAIExport } from "../src/services/aiExport";
+import { DAILY_LOG_DRAFT_PREFIX, clearDailyLogDraft, readDailyLogDraft, writeDailyLogDraft } from "../src/services/dailyDrafts";
 import { PRE_IMPORT_SNAPSHOT_KEY, STORAGE_V1_KEY, STORAGE_V2_KEY, STORAGE_V3_KEY } from "../src/services/storage/constants";
 import { createDefaultStudyState, normalizeV3State } from "../src/services/storage/migrations";
 import { dailyLogSearchText, getModuleProgress, getWeeklyV3Stats } from "../src/services/v3Selectors";
@@ -129,12 +130,20 @@ const saved: StudyState = { ...migrated, settings: { ...migrated.settings, displ
 studyRepository.save(saved);
 assert.equal(studyRepository.load().settings.displayName, "Persistence Round Trip");
 
+const autosaveDraft = { version: 1 as const, date: "2026-08-18", work: "尚未正式保存的 Daily Log", learned: "草稿恢复测试", problems: "", next: "", tags: ["learning"], roadmapItemIds: ["http-status-code"], projectIds: [], sourceUpdatedAt: updatedAt, savedAt: "2026-08-18T12:00:00.000Z" };
+assert.equal(writeDailyLogDraft(autosaveDraft), true);
+assert.deepEqual(readDailyLogDraft(autosaveDraft.date), autosaveDraft);
+clearDailyLogDraft(autosaveDraft.date);
+assert.equal(readDailyLogDraft(autosaveDraft.date), undefined);
+assert.equal(writeDailyLogDraft(autosaveDraft), true);
+
 const importedSource = createDefaultStudyState();
 importedSource.settings.displayName = "Imported V3";
 const backup = new File([JSON.stringify({ app: "study-hub", storageVersion: 3, exportedAt: updatedAt, data: importedSource })], "backup.json", { type: "application/json" });
 const imported = await studyRepository.importBackup(backup, saved);
 assert.equal(imported.settings.displayName, "Imported V3");
 assert.ok(localStorage.getItem(PRE_IMPORT_SNAPSHOT_KEY), "import must keep a pre-import safety snapshot");
+assert.equal(readDailyLogDraft(autosaveDraft.date), undefined, "import must clear stale Daily Log drafts");
 
 const normalized = normalizeV3State({ ...imported, settings: { ...imported.settings, currentFocusTopicIds: ["unknown-topic"] } });
 assert.deepEqual(normalized.settings.currentFocusTopicIds, defaultFocusTopicIds);
@@ -153,4 +162,9 @@ for (const [legacyPath, target] of [["skills", "/roadmap"], ["practice", "/"], [
 }
 assert.ok(localStorage.getItem(STORAGE_V1_KEY) === null, "verification storage should remain isolated");
 
-console.log("V3 verification passed: migration, preservation, roadmap structure, selectors, AI export, persistence, import safety, routes, and redirects.");
+assert.equal(writeDailyLogDraft({ ...autosaveDraft, date: "2026-08-19" }), true);
+assert.ok([...Array(localStorage.length)].map((_, index) => localStorage.key(index)).some((key) => key?.startsWith(DAILY_LOG_DRAFT_PREFIX)));
+studyRepository.clearAll();
+assert.ok([...Array(localStorage.length)].map((_, index) => localStorage.key(index)).every((key) => !key?.startsWith(DAILY_LOG_DRAFT_PREFIX)), "reset must clear every Daily Log draft");
+
+console.log("V3 verification passed: migration, preservation, draft autosave storage, roadmap structure, selectors, AI export, persistence, import safety, routes, and redirects.");
