@@ -24,7 +24,7 @@ export function WeeklyReviewForm() {
 
   useEffect(() => {
     setDraft(saved ? { week: saved.week, learned: saved.learned, work: saved.work, mostValuableProblem: saved.mostValuableProblem, automated: saved.automated, unclear: saved.unclear, nextWeekGoals: saved.nextWeekGoals, resumeValue: saved.resumeValue } : emptyReview(week));
-  }, [saved?.id, saved?.updatedAt, week]);
+  }, [saved, week]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

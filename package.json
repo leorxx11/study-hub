@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint . --ignore-pattern dist",
-    "verify:v2": "node scripts/run-v2-verification.mjs",
+    "verify:v3": "node scripts/run-v3-verification.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

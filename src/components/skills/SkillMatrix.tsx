@@ -72,7 +72,7 @@ export function SkillMatrix() {
       </div>
 
       <Modal open={evidenceOpen} onClose={() => setEvidenceOpen(false)} title={`为 ${selected.name} 添加证据`} eyebrow="MANUAL EVIDENCE" description="只记录可讲清、可追溯的行动或产出。" footer={<><button className="secondary-button" type="button" onClick={() => setEvidenceOpen(false)}>取消</button><button className="primary-button" type="submit" form="evidence-form">添加证据</button></>}>
-        <form id="evidence-form" className="record-form" onSubmit={submitEvidence}><label className="full-field"><span>证据标题 *</span><input autoFocus type="text" value={evidenceTitle} onChange={(event) => setEvidenceTitle(event.target.value)} placeholder="例如：使用 curl 独立复现接口" required /></label><label className="full-field"><span>补充说明</span><textarea rows={5} value={evidenceDescription} onChange={(event) => setEvidenceDescription(event.target.value)} placeholder="可选：说明做了什么、结果是什么" /></label></form>
+        <form id="evidence-form" className="record-form" onSubmit={submitEvidence}><label className="full-field"><span>证据标题 *</span><input type="text" value={evidenceTitle} onChange={(event) => setEvidenceTitle(event.target.value)} placeholder="例如：使用 curl 独立复现接口" required /></label><label className="full-field"><span>补充说明</span><textarea rows={5} value={evidenceDescription} onChange={(event) => setEvidenceDescription(event.target.value)} placeholder="可选：说明做了什么、结果是什么" /></label></form>
       </Modal>
     </>
   );

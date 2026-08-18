@@ -40,3 +40,40 @@ export function getActivityDayLabel(isoDate: string): string {
   if (key === getLocalDateKey(yesterdayDate)) return "Yesterday";
   return formatDate(isoDate, { month: "short", day: "numeric" });
 }
+
+export function getWeekDateRange(week = getWeekKey()): { start: Date; end: Date; startKey: string; endKey: string } {
+  const match = /^(\d{4})-W(\d{2})$/.exec(week);
+  if (!match) {
+    const today = new Date();
+    return { start: today, end: today, startKey: getLocalDateKey(today), endKey: getLocalDateKey(today) };
+  }
+  const year = Number(match[1]);
+  const weekNumber = Number(match[2]);
+  const januaryFourth = new Date(year, 0, 4, 12);
+  const day = januaryFourth.getDay() || 7;
+  const start = new Date(januaryFourth);
+  start.setDate(januaryFourth.getDate() - day + 1 + (weekNumber - 1) * 7);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  return { start, end, startKey: getLocalDateKey(start), endKey: getLocalDateKey(end) };
+}
+
+export function getInternshipWeek(startDate: string, date = new Date()): number {
+  const start = new Date(`${startDate}T12:00:00`);
+  if (Number.isNaN(start.getTime())) return 1;
+  const target = new Date(date);
+  target.setHours(12, 0, 0, 0);
+  const elapsed = Math.max(0, target.getTime() - start.getTime());
+  return Math.floor(elapsed / 604_800_000) + 1;
+}
+
+export function formatLongDay(date = new Date()): string {
+  return new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric" }).format(date);
+}
+
+export function shiftWeekKey(week: string, offset: number): string {
+  const { start } = getWeekDateRange(week);
+  const shifted = new Date(start);
+  shifted.setDate(start.getDate() + offset * 7);
+  return getWeekKey(shifted);
+}

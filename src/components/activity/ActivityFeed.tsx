@@ -1,4 +1,4 @@
-import { BookOpenText, CheckCircle2, FileCheck2, FolderCheck, Link2 } from "lucide-react";
+import { BookOpenText, CalendarDays, CheckCircle2, FileCheck2, FolderCheck, Link2, MapPinCheck } from "lucide-react";
 import type { Activity } from "../../types";
 import { formatTime, getActivityDayLabel } from "../../utils/date";
 
@@ -8,6 +8,8 @@ const activityIcons = {
   practice_completed: FileCheck2,
   milestone_completed: FolderCheck,
   evidence_created: Link2,
+  daily_log_created: CalendarDays,
+  topic_completed: MapPinCheck,
 };
 
 export function ActivityFeed({ activities, emptyText = "完成任务、实践或记录后，动态会出现在这里。" }: { activities: Activity[]; emptyText?: string }) {

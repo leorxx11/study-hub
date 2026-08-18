@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { projects } from "../data/projects";
 import { practiceGroups } from "../data/practice";
+import { topicById } from "../data/roadmapV3";
 import { stages } from "../data/stages";
 import { getProgressSummary, getWeeklyMetrics, type ProgressSummary, type WeeklyMetrics } from "../services/selectors";
 import { createDefaultStudyState, studyRepository } from "../services/storage";
 import type {
   Activity,
+  DailyLog,
   Note,
   PracticeRecord,
   ProjectMilestone,
@@ -13,8 +15,10 @@ import type {
   StudyState,
   Task,
   ThemeMode,
+  TopicStatus,
   UserSettings,
   WeeklyReview,
+  WeeklyReviewV3,
 } from "../types";
 import { createId } from "../utils/id";
 
@@ -22,6 +26,8 @@ export type TaskDraft = Omit<Task, "id" | "createdAt" | "completedAt">;
 export type NoteDraft = Omit<Note, "id" | "createdAt" | "updatedAt">;
 export type PracticeDraft = Omit<PracticeRecord, "id" | "createdAt" | "completedAt">;
 export type WeeklyReviewDraft = Omit<WeeklyReview, "id" | "createdAt" | "updatedAt">;
+export type DailyLogDraft = Omit<DailyLog, "id" | "createdAt" | "updatedAt">;
+export type WeeklyReviewV3Draft = Omit<WeeklyReviewV3, "id" | "createdAt" | "updatedAt">;
 
 interface StudyContextValue {
   state: StudyState;
@@ -33,6 +39,11 @@ interface StudyContextValue {
   setCurrentStage: (id: string) => void;
   setTheme: (theme: ThemeMode) => void;
   updateSettings: (settings: Partial<UserSettings>) => void;
+  saveDailyLog: (draft: DailyLogDraft, id?: string) => string;
+  deleteDailyLog: (id: string) => void;
+  setTopicStatus: (topicId: string, status: TopicStatus) => void;
+  toggleCurrentTopic: (topicId: string) => void;
+  saveWeeklyReviewV3: (draft: WeeklyReviewV3Draft) => string;
   createTask: (draft: TaskDraft) => string;
   updateTask: (id: string, changes: Partial<TaskDraft>) => void;
   deleteTask: (id: string) => void;
@@ -144,6 +155,56 @@ export function StudyProvider({ children }: { children: ReactNode }) {
     setCurrentStage: (currentStageId) => setState((current) => ({ ...current, currentStageId })),
     setTheme: (theme) => setState((current) => ({ ...current, theme })),
     updateSettings: (settings) => setState((current) => ({ ...current, settings: { ...current.settings, ...settings } })),
+
+    saveDailyLog: (draft, existingId) => {
+      const id = existingId ?? createId("daily");
+      const now = new Date().toISOString();
+      setState((current) => {
+        const existing = current.dailyLogs.find((log) => log.id === id);
+        const log: DailyLog = { id, createdAt: existing?.createdAt ?? now, updatedAt: now, ...draft };
+        const dailyLogs = existing ? current.dailyLogs.map((item) => item.id === id ? log : item) : [log, ...current.dailyLogs];
+        const activities = existing
+          ? current.activities.map((activity) => activity.type === "daily_log_created" && activity.relatedId === id ? { ...activity, title: `记录 ${log.date} Daily Log` } : activity)
+          : [createActivity({ type: "daily_log_created", title: `记录 ${log.date} Daily Log`, relatedId: id }, now), ...current.activities];
+        return { ...current, dailyLogs, activities };
+      });
+      return id;
+    },
+    deleteDailyLog: (id) => setState((current) => ({
+      ...current,
+      dailyLogs: current.dailyLogs.filter((log) => log.id !== id),
+      activities: current.activities.filter((activity) => !(activity.type === "daily_log_created" && activity.relatedId === id)),
+    })),
+    setTopicStatus: (topicId, status) => setState((current) => {
+      const existing = current.topicProgress.find((item) => item.topicId === topicId);
+      const wasDone = existing?.status === "done";
+      const now = new Date().toISOString();
+      const topicProgress = status === "not_started"
+        ? current.topicProgress.filter((item) => item.topicId !== topicId)
+        : existing
+          ? current.topicProgress.map((item) => item.topicId === topicId ? { ...item, status, updatedAt: now } : item)
+          : [{ topicId, status, updatedAt: now }, ...current.topicProgress];
+      const activities = status === "done" && !wasDone
+        ? [createActivity({ type: "topic_completed", title: `完成 Topic：${topicById.get(topicId)?.title ?? topicId}`, relatedId: topicId }, now), ...current.activities]
+        : status !== "done" && wasDone
+          ? current.activities.filter((activity) => !(activity.type === "topic_completed" && activity.relatedId === topicId))
+          : current.activities;
+      return { ...current, topicProgress, activities };
+    }),
+    toggleCurrentTopic: (topicId) => setState((current) => {
+      const ids = current.settings.currentFocusTopicIds;
+      if (ids.includes(topicId) && ids.length === 1) return current;
+      const currentFocusTopicIds = ids.includes(topicId) ? ids.filter((id) => id !== topicId) : [...ids.slice(-2), topicId];
+      return { ...current, settings: { ...current.settings, currentFocusTopicIds } };
+    }),
+    saveWeeklyReviewV3: (draft) => {
+      const existing = state.weeklyReviewsV3.find((review) => review.week === draft.week);
+      const now = new Date().toISOString();
+      const id = existing?.id ?? createId("weekly-v3");
+      const review: WeeklyReviewV3 = { id, ...draft, createdAt: existing?.createdAt ?? now, updatedAt: now };
+      setState((current) => ({ ...current, weeklyReviewsV3: existing ? current.weeklyReviewsV3.map((item) => item.id === existing.id ? review : item) : [review, ...current.weeklyReviewsV3] }));
+      return id;
+    },
 
     createTask: (draft) => {
       const id = createId("task");

@@ -17,5 +17,12 @@ export default tseslint.config(
   {
     files: ["src/**/*.{ts,tsx}"],
     languageOptions: { globals: globals.browser },
+    rules: {
+      // Form editors intentionally synchronize drafts when their record/route changes.
+      "react-hooks/set-state-in-effect": "off",
+      // React Compiler cannot currently preserve a few small selector memos that
+      // depend on immutable repository state; they remain valid React memoization.
+      "react-hooks/preserve-manual-memoization": "off",
+    },
   },
 );

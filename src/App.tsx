@@ -1,14 +1,11 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { StudyProvider } from "./hooks/useStudyState";
-import { Notes } from "./pages/Notes";
 import { Overview } from "./pages/Overview";
-import { Practice } from "./pages/Practice";
-import { Progress } from "./pages/Progress";
 import { Projects } from "./pages/Projects";
 import { Roadmap } from "./pages/Roadmap";
 import { Settings } from "./pages/Settings";
-import { Skills } from "./pages/Skills";
+import { Weekly } from "./pages/Weekly";
 
 export default function App() {
   return (
@@ -17,13 +14,14 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route index element={<Overview />} />
           <Route path="roadmap" element={<Roadmap />} />
-          <Route path="skills" element={<Skills />} />
-          <Route path="practice" element={<Practice />} />
+          <Route path="weekly" element={<Weekly />} />
           <Route path="projects" element={<Projects />} />
-          <Route path="notes" element={<Notes />} />
-          <Route path="progress" element={<Progress />} />
           <Route path="settings" element={<Settings />} />
-          <Route path="*" element={<Overview />} />
+          <Route path="skills" element={<Navigate to="/roadmap" replace />} />
+          <Route path="practice" element={<Navigate to="/" replace />} />
+          <Route path="notes" element={<Navigate to="/" replace />} />
+          <Route path="progress" element={<Navigate to="/weekly" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
     </StudyProvider>

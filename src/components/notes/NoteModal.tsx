@@ -50,7 +50,7 @@ export function NoteModal({ open, note, defaults, onClose }: NoteModalProps) {
     <Modal open={open} onClose={onClose} title={note ? "编辑记录" : "新建记录"} eyebrow="ENGINEERING LOG" description="支持多行 Markdown 风格内容；不必填满模板，只保留有价值的证据。" wide footer={<><button className="secondary-button" type="button" onClick={onClose}>取消</button><button className="primary-button" type="submit" form="note-form">{note ? "保存修改" : "保存记录"}</button></>}>
       <form id="note-form" className="record-form" onSubmit={submit}>
         <div className="note-type-picker" role="group" aria-label="记录类型">{(Object.keys(noteTypeLabels) as NoteType[]).map((item) => <button type="button" className={type === item ? "active" : ""} aria-pressed={type === item} onClick={() => changeType(item)} key={item}>{noteTypeLabels[item]}</button>)}</div>
-        <label className="full-field"><span>标题 *</span><input autoFocus type="text" value={title} maxLength={160} onChange={(event) => setTitle(event.target.value)} placeholder={`${noteTypeLabels[type]} 标题`} required /></label>
+        <label className="full-field"><span>标题 *</span><input type="text" value={title} maxLength={160} onChange={(event) => setTitle(event.target.value)} placeholder={`${noteTypeLabels[type]} 标题`} required /></label>
         <label className="full-field"><span>内容</span><textarea className="note-editor" rows={18} value={content} onChange={(event) => setContent(event.target.value)} /></label>
         <RelationFields skillIds={skillIds} stageId={stageId} projectId={projectId} onSkillIdsChange={setSkillIds} onStageIdChange={setStageId} onProjectIdChange={setProjectId} />
       </form>

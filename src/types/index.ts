@@ -121,7 +121,7 @@ export interface PracticeRecord {
   completedAt?: string;
 }
 
-export type ActivityType = "task_completed" | "note_created" | "practice_completed" | "milestone_completed" | "evidence_created";
+export type ActivityType = "task_completed" | "note_created" | "practice_completed" | "milestone_completed" | "evidence_created" | "daily_log_created" | "topic_completed";
 
 export interface Activity {
   id: string;
@@ -170,12 +170,115 @@ export interface WeeklyReview {
   updatedAt: string;
 }
 
+export interface DailyLog {
+  id: string;
+  date: string;
+  work: string;
+  learned?: string;
+  problems?: string;
+  next?: string;
+  tags: string[];
+  roadmapItemIds?: string[];
+  projectIds?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TopicStatus = "not_started" | "learning" | "practiced" | "done";
+
+export interface RoadmapTopicProgress {
+  topicId: string;
+  status: TopicStatus;
+  updatedAt: string;
+}
+
+export interface RoadmapTopic {
+  id: string;
+  order: number;
+  title: string;
+  pathId: string;
+  moduleId: string;
+  estimatedMinutes: string;
+  why: string;
+  understand: string[];
+  doneCriteria: string[];
+  practiceSuggestion: string;
+  nextTopicId?: string;
+  legacySkillIds?: string[];
+}
+
+export interface RoadmapModule {
+  id: string;
+  pathId: string;
+  title: string;
+  description: string;
+  topicIds: string[];
+}
+
+export interface RoadmapPath {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  stageId?: string;
+  moduleIds: string[];
+}
+
+export type GrowthLevel = "same" | "some" | "clear";
+
+export interface WeeklyGrowthCheck {
+  technicalUnderstanding: GrowthLevel;
+  problemSolving: GrowthLevel;
+  automation: GrowthLevel;
+  engineeringProcess: GrowthLevel;
+}
+
+export interface WeeklyReviewV3 {
+  id: string;
+  week: string;
+  mainWork: string;
+  learned: string;
+  repetitiveWork: string;
+  deepDive: string;
+  nextWeekTop3: string;
+  growthCheck: WeeklyGrowthCheck;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AIExportRange = "this_week" | "last_2_weeks" | "this_month" | "internship";
+
 export interface UserSettings {
   displayName: string;
   weeklyFocus: string;
+  internshipStartDate: string;
+  currentFocusTopicIds: string[];
+  aiExportDefaultRange: AIExportRange;
 }
 
 export interface StudyState {
+  version: 3;
+  storageVersion: 3;
+  checklist: Record<string, boolean>;
+  completedStages: string[];
+  skillLevels: Record<string, number>;
+  currentStageId: string;
+  theme: ThemeMode;
+  settings: UserSettings;
+  tasks: Task[];
+  notes: Note[];
+  practiceRecords: PracticeRecord[];
+  activities: Activity[];
+  evidence: SkillEvidence[];
+  projectMilestones: ProjectMilestone[];
+  weeklyReviews: WeeklyReview[];
+  dailyLogs: DailyLog[];
+  topicProgress: RoadmapTopicProgress[];
+  weeklyReviewsV3: WeeklyReviewV3[];
+  legacyData?: Record<string, unknown>;
+}
+
+export interface V2StudyState {
   version: 2;
   storageVersion: 2;
   checklist: Record<string, boolean>;
@@ -183,7 +286,10 @@ export interface StudyState {
   skillLevels: Record<string, number>;
   currentStageId: string;
   theme: ThemeMode;
-  settings: UserSettings;
+  settings: {
+    displayName: string;
+    weeklyFocus: string;
+  };
   tasks: Task[];
   notes: Note[];
   practiceRecords: PracticeRecord[];
