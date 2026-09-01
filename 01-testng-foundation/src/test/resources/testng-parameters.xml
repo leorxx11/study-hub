@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="TestNG parameters suite">
+    <parameter name="product-name" value="Notebook"/>
+    <parameter name="quantity" value="1"/>
+
+    <listeners>
+        <listener class-name="listener.MyTestListener"/>
+    </listeners>
+
+    <test name="XML parameters and optional defaults">
+        <!-- 此处 quantity=2 会覆盖 suite 级别的 quantity=1。 -->
+        <parameter name="quantity" value="2"/>
+        <parameter name="available-stock" value="5"/>
+        <!-- unit-price-cents 故意不提供，测试方法使用 @Optional(&quot;350&quot;)。 -->
+        <classes>
+            <class name="com.studyhub.order.advanced.OrderParametersExample"/>
+        </classes>
+    </test>
+</suite>

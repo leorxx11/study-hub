@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Create order factory suite">
+
+    <listeners>
+        <listener class-name="listener.MyTestListener"/>
+    </listeners>
+
+    <test name="Create order scenarios">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <!-- 此类是 Factory 入口；Factory 会动态创建实际执行的场景测试实例。 -->
+            <class name="com.studyhub.order.CreateOrderExampleTest">
+                <methods>
+                    <include name="shouldCreatePendingOrderWhenInputIsValid"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

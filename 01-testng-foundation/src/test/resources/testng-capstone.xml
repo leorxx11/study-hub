@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Order capstone suite">
+    <listeners>
+        <!-- TODO：注册 listener.MyTestListener。 -->
+        <listener class-name="listener.MyTestListener"></listener>
+    </listeners>
+
+    <test name="Order capstone tests">
+        <classes>
+            <!-- TODO：加入 OrderCreationTest。 -->
+            <!-- TODO：加入 OrderLifecycleTest。 -->
+            <!-- TODO：加入 OrderGatewayTest。 -->
+            <class name="com.studyhub.order.capstone.OrderGatewayTest"></class>
+            <class name="com.studyhub.order.capstone.OrderLifecycleTest"></class>
+            <class name="com.studyhub.order.capstone.OrderCreationTest"></class>
+        </classes>
+    </test>
+</suite>
