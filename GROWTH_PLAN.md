@@ -14,7 +14,7 @@
 
 1. [01 · TestNG 测试基础](01-testng-foundation/GOALS.md)
 2. 02 · Mockito 与白盒测试
-3. 03 · RestAssured 接口自动化
+3. [03 · RestAssured 接口自动化](03-rest-assured-foundation/README.md)
 4. 04 · MySQL/Linux 与接口工程化
 5. 05 · Selenium UI 自动化
 6. 06 · Page Object 与稳定性
