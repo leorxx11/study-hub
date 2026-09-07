@@ -2,7 +2,6 @@ package com.studyhub.api.exercise.chapter01;
 
 import com.studyhub.api.support.LocalApiTest;
 import io.restassured.http.ContentType;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -17,17 +16,35 @@ public class FirstApiExercise extends LocalApiTest {
 
     @Test
     public void shouldGetPen() {
-        // TODO：请求 GET /products/PRD-2。
+        // 请求 GET /products/PRD-2。
         // 断言 HTTP 200、JSON 响应。
         // 断言 id=PRD-2、name=Pen、category=STATIONERY、unitPriceCents=300。
-        Assert.fail("TODO：完成商品查询成功测试");
+        given()
+                .baseUri(baseUri)
+        .when()
+                .get("/products/PRD-2")
+        .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body("id", equalTo("PRD-2"))
+                .body("name", equalTo("Pen"))
+                .body("category", equalTo("STATIONERY"))
+                .body("unitPriceCents", equalTo(300));
     }
 
     @Test
     public void shouldReportMissingProduct() {
-        // TODO：请求 GET /products/PRD-404。
+        // 请求 GET /products/PRD-404。
         // 断言 HTTP 404、JSON 响应。
         // 断言 code=PRODUCT_NOT_FOUND、message=Product not found: PRD-404。
-        Assert.fail("TODO：完成商品不存在测试");
+        given()
+                .baseUri(baseUri)
+        .when()
+                .get("/products/PRD-404")
+        .then()
+                .statusCode(404)
+                .contentType(ContentType.JSON)
+                .body("code", equalTo("PRODUCT_NOT_FOUND"))
+                .body("message", equalTo("Product not found: PRD-404"));
     }
 }

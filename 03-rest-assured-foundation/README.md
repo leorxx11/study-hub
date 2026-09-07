@@ -2,14 +2,13 @@
 
 第三阶段：使用 Java 21、TestNG、REST Assured 和 Maven，通过真实 HTTP 测试订单业务。
 
-当前已提供配套服务、接口契约、服务验收测试及第一章。第二至九章按学习进度逐章补充。
+当前已提供配套服务、服务验收测试及第一至六章代码示例。第七至九章按学习进度逐章补充。
 
 ## 从这里开始
 
 1. 在 IntelliJ IDEA 中导入本目录的 `pom.xml`，使用 JDK 21 或更高版本。
-2. 阅读 [第一章：HTTP 与第一个接口测试](docs/chapters/01-first-http-test.md)。
-3. 运行 [FirstApiExampleTest.java](src/test/java/com/studyhub/api/reference/chapter01/FirstApiExampleTest.java)，这是已完成的阅读示例。
-4. 编写 [FirstApiExercise.java](src/test/java/com/studyhub/api/exercise/chapter01/FirstApiExercise.java)，这是本章需要你完成的两道练习。
+2. 按 `src/test/java/com/studyhub/api/reference/chapterXX` 的章节顺序阅读并运行示例。
+3. 第一章已完成的练习保留在 `src/test/java/com/studyhub/api/exercise/chapter01`。
 
 测试会自动启动本地服务并关闭，地址由 `baseUri` 提供。每条测试获得独立的内存订单和 token；测试通过 `127.0.0.1` 的动态端口访问服务。
 
@@ -17,18 +16,17 @@
 
 | 位置 | 用途 | 你现在需要做什么 |
 | --- | --- | --- |
-| `docs/chapters` | 分章讲解 | 按顺序阅读 |
 | `src/test/java/com/studyhub/api/reference/chapterXX` | 完整阅读示例 | 阅读、运行、理解 |
-| `src/test/java/com/studyhub/api/exercise/chapterXX` | 分章练习 | 编写 TODO 中要求的测试 |
+| `src/test/java/com/studyhub/api/exercise/chapter01` | 第一章练习 | 保留已完成代码 |
 | `src/test/java/com/studyhub/api/verification` | 配套服务自身的验收测试 | 由课程维护者维护 |
 | `src/test/java/com/studyhub/api/support` | 测试服务的启动与关闭 | 已提供 |
 | `src/main/java` | 被测试的 HTTP 服务和订单业务 | 已提供 |
 
 ## 九章路线
 
-每章练习相互独立，只使用当前章及之前学过的内容。
+每章示例只使用当前章及之前学过的内容。
 
-| 章节 | 重点 | 练习目标 |
+| 章节 | 重点 | 示例内容 |
 | --- | --- | --- |
 | 1. HTTP 与第一个接口测试 | HTTP、`given/when/then`、状态码、响应格式、简单字段断言 | 商品查询成功与不存在 |
 | 2. 构造请求 | 路径参数、查询参数、请求头、JSON 请求体 | 商品查询、筛选及登录请求 |
@@ -40,7 +38,7 @@
 | 8. 公共配置与失败定位 | RequestSpecification、ResponseSpecification、日志、数据隔离 | 复用配置并定位失败 |
 | 9. 综合验收 | 按契约独立设计测试 | 成功流程、失败流程及整套运行 |
 
-配套服务的完整规则见 [接口契约](docs/API_CONTRACT.md)。第三阶段使用内存数据，MySQL/Linux 按总路线安排在第四阶段。
+第三阶段使用内存数据，MySQL/Linux 按总路线安排在第四阶段。
 
 ## 运行与验收
 
@@ -50,23 +48,16 @@
 # 验证配套服务和所有已提供的阅读示例
 mvn test
 
-# 单独运行第一章阅读示例
-mvn -Dtest=FirstApiExampleTest test
+# 单独运行某一章示例，替换为对应类名即可
+mvn -Dtest=FailurePathsAndDataDrivenExampleTest test
 
-# 单独运行你写的第一章练习
-mvn -Dtest=FirstApiExercise test
-
-# 第一章完成后的联合验收
+# 连同第一章已完成练习一起运行
 mvn '-Dtest=*Test,*Exercise' test
 ```
 
-Maven Surefire 默认选择 `*Test` 等测试类名；待填写的练习使用 `*Exercise`，通过上面的显式命令运行。练习中的 `Assert.fail("TODO...")` 会让未完成的用例明确失败，完成对应测试后删除该语句。
-
-因此，刚导入时 `mvn test` 通过仅表示配套服务和阅读示例通过；第一章还需要完成两道练习并运行联合验收。IDEA 中也可直接运行指定的示例或练习类。
+Maven Surefire 默认选择 `*Test` 测试类，因此 `mvn test` 会运行服务验收测试和所有章节示例。IDEA 中也可直接运行指定的示例类。
 
 本阶段最终要求：动态传递 token 和订单 ID；覆盖成功、非法输入、认证失败、资源不存在、状态冲突；从 HTTP 再次查询确认业务状态；每条测试独立准备数据，关联流程写在同一个测试方法中。
-
-服务自身的验证范围和结果记录在 [验证记录](docs/VALIDATION.md)。
 
 ## 官方资料
 
